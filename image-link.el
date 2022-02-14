@@ -101,6 +101,7 @@ From http://xahlee.info/emacs/emacs/elisp_generate_uuid.html"
                 image-link-destination-buffer bf)
     (delete-other-windows)))
 
+;;;###autoload
 (defun image-link-run ()
   "Entry point for image-link.
 If in 'org-mode' pops to select a file from the landing zone.
