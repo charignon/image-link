@@ -22,12 +22,21 @@
 (require 'org)
 
 (defcustom image-link-subjects-settings '()
-  "A-list of settings for picture subjects."
+  "A-list of settings for picture subjects.
+The keys are subject names and the values are a-list containing:
+'album', a folder to put pictures into once inserted.
+'file', an org file that will contain all the pictures for that subject.
+
+Example:
+'((\"armand\" . ((\"album\" . \"/Users/laurent/.roam/album_armand/\")
+   (\"file\" . \"/Users/laurent/.roam/20220119215323-armand_s_photo_album_2022.org\")))
+ (\"josephine\" . ((\"album\" . \"/Users/laurent/.roam/album_josephine/\")
+   (\"file\" . \"/Users/laurent/.roam/20220119215313-josephine_s_photo_album_2022.org\"))))"
   :group 'image-link
   :type 'a-list)
 
 (defcustom image-link-folder nil
-  "Path to the folder containing images."
+  "Path to the folder containing images to insert."
   :group 'image-link
   :type 'string)
 
