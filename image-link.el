@@ -64,16 +64,31 @@ From http://xahlee.info/emacs/emacs/elisp_generate_uuid.html"
             (substring s 16 20)
             (substring s 20 32))))
 
+;; TODO improve this to use the filename to infer the date of the picture
 (defun image-link-attach-image-at-point ()
   "Attach image at point into the previously visited 'org-mode' buffer."
   (let* ((fname                 (image-dired-original-file-name))
          (kind                  (completing-read "Kind: " (a-keys image-link-subjects-settings)))
-         (dateraw               (completing-read "Date: " '("today" "other")))
-         (ts                    (if (string= dateraw "today")
-                                    (format-time-string "<%Y-%m-%d %a>" (current-time))
-                                  (with-temp-buffer
-                                    (org-time-stamp nil)
-                                    org-last-inserted-timestamp)))
+         (fname                 (f-filename image-link-destination-file))
+         (fname-format          (format "<%s>" (s-replace ".org" "" fname )))
+         (is-date-file          (s-match "20..-..-.." fname))
+         (dateraw (completing-read "Date: " '("today" "other"))))
+         (ts                     (cond
+                                  ((string= dateraw "other") (with-temp-buffer
+                                                               (org-time-stamp nil)
+                                                               org-last-inserted-timestamp))
+                                  ((string= dateraw "today") (format-time-string "<%Y-%m-%d %a>" (current-time)))
+                                  (t dateraw)))
+
+         ;; (dateraw               (if is-date-file
+         ;;                            fname-format
+         ;;                          (completing-read "Date: " '("today" "other"))))
+         ;; (ts                     (cond
+         ;;                          ((string= dateraw "other") (with-temp-buffer
+         ;;                                                       (org-time-stamp nil)
+         ;;                                                       org-last-inserted-timestamp))
+         ;;                          ((string= dateraw "today") (format-time-string "<%Y-%m-%d %a>" (current-time)))
+         ;;                          (t dateraw)))
          (description           (read-from-minibuffer "Enter a description: "))
          (uuid                  (s-concat (image-link-uuid-create) ".png"))
          (subject               (a-get image-link-subjects-settings kind))
@@ -100,6 +115,7 @@ From http://xahlee.info/emacs/emacs/elisp_generate_uuid.html"
       (progn
         (insert link)
         (f-append-text link-with-star 'utf-8 albumfile)))))
+
 
 (defun image-link-launch-image-picker (folder)
   "Open an image picked in FOLDER and remember the file we are coming from."
@@ -132,3 +148,4 @@ In 'image-dired' mode inserts the file in the 'org-mode' buffer we came from."
 
 (provide 'image-link)
 ;;; image-link.el ends here
+;; TODO Fix bug when inserting pictures in two days one after another
